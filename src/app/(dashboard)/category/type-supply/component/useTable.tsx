@@ -6,40 +6,40 @@ import { toast } from 'react-toastify'
 
 import ColumnActions from '@/components/table/column-actions'
 import type { IColumns } from '@/types/table'
-import type { IUnit } from '@/types/category/unit'
+import type { ITypeSupply } from '@/types/category/typeSupply'
 import { MESSAGE } from '@/constants/message-response'
 
-const columnHelper = createColumnHelper<IUnit>()
+const columnHelper = createColumnHelper<ITypeSupply>()
 
 type IProps = {
-  handleEdit: (row: IUnit) => void
-  handleDelete: (row: IUnit) => void
+  handleEdit: (row: ITypeSupply) => void
+  handleDelete: (row: ITypeSupply) => void
 }
 
-export const useTableUnit = (props: IProps) => {
+export const useTableTypeSupply = (props: IProps) => {
   const { handleEdit, handleDelete } = props
 
-  const columns = useMemo<IColumns<IUnit>>(
+  const columns = useMemo<IColumns<ITypeSupply>>(
     () => [
       columnHelper.accessor('code', {
         cell: info => info.getValue(),
-        header: 'MÃ ĐƠN VỊ'
+        header: 'MÃ LOẠI VẬT TƯ'
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: 'TÊN ĐƠN VỊ'
+        header: 'TÊN LOẠI VẬT TƯ'
       }),
       {
         id: 'actions',
         cell: info => {
           return (
-            <ColumnActions<IUnit>
+            <ColumnActions<ITypeSupply>
               onDelete={handleDelete}
               onEdit={handleEdit}
               onSwitch={() => {
                 toast.error(MESSAGE['status-pending'])
               }}
-              row={{ ...info.row.original, lock: true }}
+              row={{ ...info.row.original }}
             />
           )
         },

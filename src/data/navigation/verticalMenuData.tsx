@@ -165,6 +165,11 @@ const verticalMenuData = (): VerticalMenuDataType[] => [
         icon: 'ri-suitcase-line'
       },
       {
+        label: 'DM.Loại Vật tư',
+        href: 'category/type-supply',
+        icon: 'ri-suitcase-line'
+      },
+      {
         label: 'DM. Sọt',
         href: 'category/basket',
         icon: 'ri-shopping-basket-line'

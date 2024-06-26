@@ -4,9 +4,12 @@ import Typography from '@mui/material/Typography'
 
 import { createColumnHelper } from '@tanstack/react-table'
 
+import { toast } from 'react-toastify'
+
 import type { IColumns } from '@/types/table'
 import ColumnActions from '@/components/table/column-actions'
 import type { IProduct } from '@/types'
+import { MESSAGE } from '@/constants/message-response'
 
 const columnHelper = createColumnHelper<IProduct>()
 
@@ -54,7 +57,16 @@ export const useTableProduct = (props: IProps) => {
       {
         id: 'actions',
         cell: info => {
-          return <ColumnActions<IProduct> onDelete={handleDelete} onEdit={handleEdit} row={info.row.original} />
+          return (
+            <ColumnActions<IProduct>
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              onSwitch={() => {
+                toast.error(MESSAGE['status-pending'])
+              }}
+              row={{ ...info.row.original, lock: true }}
+            />
+          )
         },
         header: 'thao tác',
         meta: { align: 'center' }

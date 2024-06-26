@@ -8,5 +8,6 @@ export const MESSAGE = {
   'remove-success': 'Xóa thành công!',
   'remove-failed': 'Xóa thất bại!',
   'status-success': 'Thay đổi trạng thái thành công!',
-  'status-failed': 'Thay đổi trạng thái thất bại!'
+  'status-failed': 'Thay đổi trạng thái thất bại!',
+  'status-pending': 'Đang phát triển!'
 }

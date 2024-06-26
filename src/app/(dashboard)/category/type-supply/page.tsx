@@ -11,29 +11,30 @@ import DrawerCore from '@/components/drawer/core'
 import type { IFieldType } from '@/components/form/render-input'
 import renderFields from '@/components/form/render-input'
 import { FormEach } from '@/components/form/function-form'
-import type { IUnit } from '@/types/category/unit'
 import {
-  useCreateUnitMutation,
-  useUpdateUnitMutation,
-  useListUnitQuery,
-  useRemoveUnitMutation
-} from '@/redux-store/slices/cate-unit'
-import { useTableUnit } from './component/useTable'
+  useCreateTypeSupplyMutation,
+  useListTypeSupplyQuery,
+  useRemoveTypeSupplyMutation,
+  useUpdateTypeSupplyMutation
+} from '@/redux-store/slices/cate-type-supply'
+import type { ITypeSupply } from '@/types/category/typeSupply'
+import { useTableTypeSupply } from './component/useTable'
 
 export default function Page() {
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
 
-  const Unit = useListUnitQuery({})
-  const [createUnit, { isLoading: createLoading }] = useCreateUnitMutation()
-  const [updateUnit, { isLoading: updateLoading }] = useUpdateUnitMutation()
-  const [removeUnit] = useRemoveUnitMutation()
+  const TypeSupply = useListTypeSupplyQuery({})
+  const [createTypeSupply, { isLoading: createLoading }] = useCreateTypeSupplyMutation()
+  const [updateTypeSupply, { isLoading: updateLoading }] = useUpdateTypeSupplyMutation()
+  const [removeTypeSupply] = useRemoveTypeSupplyMutation()
 
-  const methods = useForm<IUnit>({
+  const methods = useForm<ITypeSupply>({
     defaultValues: {
       code: '',
-      name: '0',
-      id: ''
+      name: '',
+      id: '',
+      description: ''
     }
   })
 
@@ -45,36 +46,37 @@ export default function Page() {
   }
 
   const handleOnEdit = useCallback(
-    (data: IUnit) => {
+    (data: ITypeSupply) => {
       setIsEdit(true)
-      FormEach<IUnit>({ ...data }, setValue)
+      FormEach<ITypeSupply>({ ...data }, setValue)
       setDrawerOpen(true)
     },
     [setValue]
   )
 
   const handleOnRemove = useCallback(
-    (data: IUnit) => {
-      removeUnit(data.id)
+    (data: ITypeSupply) => {
+      removeTypeSupply(data.id)
     },
-    [removeUnit]
+    [removeTypeSupply]
   )
 
-  const { columns } = useTableUnit({ handleEdit: handleOnEdit, handleDelete: handleOnRemove })
+  const { columns } = useTableTypeSupply({ handleEdit: handleOnEdit, handleDelete: handleOnRemove })
 
-  const handleOnFinish = (value: { [s: string]: unknown } & IUnit) => {
+  const handleOnFinish = (value: { [s: string]: unknown } & ITypeSupply) => {
     const result = {
       code: value.code,
-      name: value.name
+      name: value.name,
+      description: value.description
     }
 
     if (isEdit) {
-      updateUnit({ ...result, id: value.id }).finally(() => {
+      updateTypeSupply({ ...result, id: value.id }).finally(() => {
         setDrawerOpen(false)
         setIsEdit(false)
       })
     } else {
-      createUnit(result).finally(() => {
+      createTypeSupply(result).finally(() => {
         setDrawerOpen(false)
       })
     }
@@ -86,7 +88,7 @@ export default function Page() {
       name: 'code',
       colProps: { xs: 6 },
       inputProps: {
-        label: 'Mã đơn vị',
+        label: 'Mã loại vật tư',
         autoFocus: true
       },
       controlProps: { rules: { required: true } }
@@ -95,17 +97,23 @@ export default function Page() {
       type: 'input',
       name: 'name',
       colProps: { xs: 6 },
-      inputProps: { label: 'Tên đơn vị' },
+      inputProps: { label: 'Tên loại vật tư' },
       controlProps: { rules: { required: true } }
+    },
+    {
+      type: 'input',
+      name: 'description',
+      colProps: { xs: 12 },
+      inputProps: { label: 'Mô tả' }
     }
   ]
 
   return (
     <section>
-      <TableCore<IUnit>
+      <TableCore<ITypeSupply>
         header={{ filter: false, select: true, create: { fn: handleCreate } }}
         columns={columns}
-        data={(Unit.data?.docs || []) as IUnit[]}
+        data={(TypeSupply.data?.docs || []) as ITypeSupply[]}
       />
 
       <DrawerCore
@@ -114,7 +122,7 @@ export default function Page() {
         onValid={handleOnFinish}
         setDrawerOpen={setDrawerOpen}
         size={{ base: '100%', md: 700 }}
-        title={isEdit ? 'Cập nhật đơn vị' : 'Thêm mới đơn vị'}
+        title={isEdit ? 'Cập nhật loại vật tư' : 'Thêm mới loại vật tư'}
         loading={createLoading || updateLoading}
       >
         <Grid container spacing={4}>

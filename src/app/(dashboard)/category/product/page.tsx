@@ -122,6 +122,7 @@ export default function Page() {
       colProps: { xs: 2 },
       inputProps: {
         label: 'Chiều dài',
+        type: 'number',
         InputProps: {
           endAdornment: <InputAdornment position='end'>cm</InputAdornment>
         }
@@ -133,6 +134,7 @@ export default function Page() {
       colProps: { xs: 2 },
       inputProps: {
         label: 'Chiều rộng',
+        type: 'number',
         InputProps: {
           endAdornment: <InputAdornment position='end'>cm</InputAdornment>
         }
@@ -144,6 +146,7 @@ export default function Page() {
       colProps: { xs: 2 },
       inputProps: {
         label: 'Chiều cao',
+        type: 'number',
         InputProps: {
           endAdornment: <InputAdornment position='end'>cm</InputAdornment>
         }
@@ -155,6 +158,7 @@ export default function Page() {
       colProps: { xs: 6 },
       inputProps: {
         label: 'Khối lượng',
+        type: 'number',
         InputProps: {
           endAdornment: <InputAdornment position='end'>Gram</InputAdornment>
         }
