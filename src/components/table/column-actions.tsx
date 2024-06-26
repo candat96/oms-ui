@@ -4,7 +4,7 @@ import Switch from '@mui/material/Switch'
 import CustomIconButton from '@/@core/components/mui/IconButton'
 
 type IProps<T> = {
-  row: T & { status?: boolean }
+  row: T & { lock?: boolean }
   hidden?: boolean
   onSwitch?: (row: T, checked: boolean) => void
   onEdit?: (row: T) => void
@@ -16,11 +16,11 @@ function ColumnActions<T = unknown>(props: IProps<T>) {
 
   return (
     <Stack direction='row' width='100%' justifyContent='center' spacing={1}>
-      {typeof props.row.status !== 'undefined' && props.onSwitch && (
+      {typeof props.row.lock !== 'undefined' && props.onSwitch && (
         <Switch
-          defaultChecked={props.row.status}
-          onChange={(e: unknown, checked: boolean) => {
-            props.onSwitch && props.onSwitch(props.row, checked)
+          defaultChecked={props.row.lock}
+          onChange={(e: unknown, lock: boolean) => {
+            props.onSwitch && props.onSwitch(props.row, lock)
           }}
         />
       )}
