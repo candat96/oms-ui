@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  oms-web-ui:
+    image: oms-web-ui
+    build: .
+    container_name: 'oms-web-ui'
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3001:3000"
+
