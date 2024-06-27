@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  oms-web-ui:
+    image: oms-web-ui
+    build: .
+    container_name: 'oms-web-ui'
+    restart: always
+    env_file:
+      - .env
+    networks:
+      wms-oms-bs_hub:
+        ipv4_address: 172.2.0.33
+
+
+networks:
+  wms-oms-bs_hub:
+    driver: bridge
+    external: true
