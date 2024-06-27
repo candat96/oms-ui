@@ -98,24 +98,32 @@ type ITableProps<T> = {
     action?: ReactNode
     cardInfo?: ReactNode
     menus?: {
-      [s: string]: { fn: (target: IMenuFnKey) => void }
+      [s: string]: { fn: (target: IMenuFnKey, value: unknown) => void }
     }
   }
   footer?: {
     cardInfo?: ReactNode
     pagination?: boolean
+    paginate?: {
+      page: number
+      limit: number
+      total: number
+      onPage: (page: number) => void
+      onRow: (limit: number) => void
+    }
   }
 }
 
 function TableCore<T = { [s: string]: unknown }>(props: ITableProps<T>) {
   const { data, columns } = props
-
-  const { items } = useListItem({ menus: props.header?.menus })
   const [globalFilter, setGlobalFilter] = useState('')
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+
+  const { items } = useListItem({ menus: props.header?.menus, value: rowSelection })
 
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
 
@@ -132,6 +140,10 @@ function TableCore<T = { [s: string]: unknown }>(props: ITableProps<T>) {
       })
     }
   }, [data, props.header?.expand])
+
+  useEffect(() => {
+    setRowSelection({})
+  }, [data])
 
   const convertColumns = useMemo(() => {
     let actions: ColumnDef<T, unknown>[] = [...columns]
@@ -238,7 +250,7 @@ function TableCore<T = { [s: string]: unknown }>(props: ITableProps<T>) {
     // row selection
     enableRowSelection: Boolean(props.header?.select),
     onRowSelectionChange: setRowSelection,
-
+    getRowId: (row: any) => row?.id || '',
     // filters change
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -399,16 +411,28 @@ function TableCore<T = { [s: string]: unknown }>(props: ITableProps<T>) {
           <section className='px-3'>
             <TablePagination
               sx={{ flex: 1, border: 'none' }}
-              rowsPerPageOptions={[7, 10, 25, { label: 'Tất cả', value: data.length }]}
+              rowsPerPageOptions={[7, 10, 25, { label: 'Tất cả', value: props.footer?.paginate?.total || 999999 }]}
               component='section'
               className='border-bs'
-              count={table.getFilteredRowModel().rows.length}
-              rowsPerPage={table.getState().pagination.pageSize}
-              page={table.getState().pagination.pageIndex}
+              count={props.footer?.paginate?.total || table.getFilteredRowModel().rows.length}
+              rowsPerPage={props.footer?.paginate?.limit || table.getState().pagination.pageSize}
+              page={
+                props.footer?.paginate?.page ? props.footer.paginate.page - 1 : table.getState().pagination.pageIndex
+              }
               onPageChange={(_, page) => {
+                if (props.footer?.paginate) {
+                  props.footer.paginate.onPage(page + 1)
+                }
+
                 table.setPageIndex(page)
               }}
-              onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
+              onRowsPerPageChange={e => {
+                if (props.footer?.paginate) {
+                  props.footer.paginate.onRow(Number(e.target.value))
+                }
+
+                table.setPageSize(Number(e.target.value))
+              }}
               labelRowsPerPage='Bản ghi:'
             />
           </section>
@@ -503,17 +527,18 @@ const DebouncedInput = ({
 // A list action
 const useListItem = (props: {
   menus?: {
-    [s: string]: { fn: (target: IMenuFnKey) => void }
+    [s: string]: { fn: (target: IMenuFnKey, value?: unknown) => void }
   }
+  value?: unknown
 }) => {
-  const { menus } = props
+  const { menus, value } = props
 
   const items = useMemo(() => {
     if (!menus) return []
 
     return [
       menus[IMenuFnKey.EXPORT] && {
-        fn: () => menus[IMenuFnKey.EXPORT].fn(IMenuFnKey.EXPORT),
+        fn: () => menus[IMenuFnKey.EXPORT].fn(IMenuFnKey.EXPORT, value),
         children: (
           <>
             <ListItemIcon>
@@ -535,7 +560,7 @@ const useListItem = (props: {
         )
       },
       menus[IMenuFnKey.HIDDEN] && {
-        fn: () => menus[IMenuFnKey.HIDDEN].fn(IMenuFnKey.HIDDEN),
+        fn: () => menus[IMenuFnKey.HIDDEN].fn(IMenuFnKey.HIDDEN, value),
         children: (
           <>
             <ListItemIcon>
@@ -546,7 +571,7 @@ const useListItem = (props: {
         )
       },
       menus[IMenuFnKey.DISPLAY] && {
-        fn: () => menus[IMenuFnKey.DISPLAY].fn(IMenuFnKey.DISPLAY),
+        fn: () => menus[IMenuFnKey.DISPLAY].fn(IMenuFnKey.DISPLAY, value),
         children: (
           <>
             <ListItemIcon>
@@ -557,7 +582,7 @@ const useListItem = (props: {
         )
       },
       menus[IMenuFnKey.DELETE] && {
-        fn: () => menus[IMenuFnKey.DELETE].fn(IMenuFnKey.DELETE),
+        fn: () => menus[IMenuFnKey.DELETE].fn(IMenuFnKey.DELETE, value),
         children: (
           <>
             <ListItemIcon>
@@ -568,7 +593,7 @@ const useListItem = (props: {
         )
       }
     ].filter(item => !_.isEmpty(item))
-  }, [menus])
+  }, [menus, value])
 
   return { items }
 }

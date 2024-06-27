@@ -2,22 +2,20 @@ import { useMemo } from 'react'
 
 import { createColumnHelper } from '@tanstack/react-table'
 
-import { toast } from 'react-toastify'
-
 import ColumnActions from '@/components/table/column-actions'
-import type { IColumns } from '@/types/table'
 import type { ITypeSupply } from '@/types/category/typeSupply'
-import { MESSAGE } from '@/constants/message-response'
+import type { IColumns } from '@/types/table'
 
 const columnHelper = createColumnHelper<ITypeSupply>()
 
 type IProps = {
   handleEdit: (row: ITypeSupply) => void
   handleDelete: (row: ITypeSupply) => void
+  handleLock: (row: ITypeSupply, lock: boolean) => void
 }
 
 export const useTableTypeSupply = (props: IProps) => {
-  const { handleEdit, handleDelete } = props
+  const { handleEdit, handleDelete, handleLock } = props
 
   const columns = useMemo<IColumns<ITypeSupply>>(
     () => [
@@ -29,6 +27,10 @@ export const useTableTypeSupply = (props: IProps) => {
         cell: info => info.getValue(),
         header: 'TÊN LOẠI VẬT TƯ'
       }),
+      columnHelper.accessor('description', {
+        cell: info => info.getValue(),
+        header: 'Mô tả'
+      }),
       {
         id: 'actions',
         cell: info => {
@@ -36,8 +38,8 @@ export const useTableTypeSupply = (props: IProps) => {
             <ColumnActions<ITypeSupply>
               onDelete={handleDelete}
               onEdit={handleEdit}
-              onSwitch={() => {
-                toast.error(MESSAGE['status-pending'])
+              onSwitch={(row, lock) => {
+                handleLock(row, lock)
               }}
               row={{ ...info.row.original }}
             />
