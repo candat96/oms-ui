@@ -6,7 +6,7 @@ import CustomIconButton from '@/@core/components/mui/IconButton'
 type IProps<T> = {
   row: T & { lock?: boolean }
   hidden?: boolean
-  onSwitch?: (row: T, checked: boolean) => void
+  onSwitch?: (row: T, lock: boolean) => void
   onEdit?: (row: T) => void
   onDelete?: (row: T) => void
 }
