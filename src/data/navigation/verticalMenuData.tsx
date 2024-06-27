@@ -139,11 +139,11 @@ const verticalMenuData = (): VerticalMenuDataType[] => [
         href: 'category/warehouse',
         icon: 'ri-archive-stack-line'
       },
-      {
-        label: 'DM. Layout',
-        href: 'category/layout',
-        icon: 'ri-layout-grid-line'
-      },
+      // {
+      //   label: 'DM. Layout',
+      //   href: 'category/layout',
+      //   icon: 'ri-layout-grid-line'
+      // },
       {
         label: 'DM. Chủ hàng',
         href: 'category/boss',
@@ -168,12 +168,12 @@ const verticalMenuData = (): VerticalMenuDataType[] => [
         label: 'DM.Loại Vật tư',
         href: 'category/type-supply',
         icon: 'ri-suitcase-line'
-      },
-      {
-        label: 'DM. Sọt',
-        href: 'category/basket',
-        icon: 'ri-shopping-basket-line'
       }
+      // {
+      //   label: 'DM. Sọt',
+      //   href: 'category/basket',
+      //   icon: 'ri-shopping-basket-line'
+      // }
     ]
   }
 ]
