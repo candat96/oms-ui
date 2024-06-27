@@ -10,11 +10,11 @@ COPY . .
 
 RUN pnpm install
 
-ENV NODE_ENV development
+ENV NODE_ENV production
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
+RUN npm run build --production
 
 FROM node:21-alpine AS deploy
 
