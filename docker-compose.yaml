@@ -9,11 +9,11 @@ services:
     env_file:
       - .env
     networks:
-      hub:
+      wms-oms-bs_hub:
         ipv4_address: 172.2.0.33
 
 
 networks:
-  hub:
+  wms-oms-bs_hub:
     driver: bridge
     external: true
