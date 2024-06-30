@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 
-import type { ResponsiveStyleValue } from '@mui/system'
 import { Button, Drawer, IconButton, Typography } from '@mui/material'
+import type { ResponsiveStyleValue } from '@mui/system'
 
 import type { FieldValues, SubmitHandler, UseFormReturn } from 'react-hook-form'
 
+import { useDictionary } from '@/hooks/DictionaryContext'
 import { FormProviderCS } from '../form'
 
 type IProps<T extends FieldValues> = {
@@ -16,10 +17,15 @@ type IProps<T extends FieldValues> = {
   title?: string
   size?: ResponsiveStyleValue<string | number>
   loading?: boolean
+
+  // dictionary?: Awaited<ReturnType<typeof getDictionary>>
 }
 
 function DrawerCore<T extends FieldValues>(props: IProps<T>) {
+  // const { title = 'Drawer Open', drawerOpen, setDrawerOpen, methods, loading = false, dictionary } = props
   const { title = 'Drawer Open', drawerOpen, setDrawerOpen, methods, loading = false } = props
+
+  const dictionary = useDictionary()
 
   const handleClose = () => {
     methods.reset()
@@ -49,10 +55,10 @@ function DrawerCore<T extends FieldValues>(props: IProps<T>) {
 
             <section className='flex gap-4 mt-6'>
               <Button variant='contained' color='primary' type='submit' disabled={loading}>
-                Lưu
+                {dictionary?.['common']?.save || 'Lưu'}
               </Button>
               <Button variant='outlined' color='secondary' type='reset' onClick={handleClose} disabled={loading}>
-                Hủy
+                {dictionary?.['common']?.cancel || 'Huỷ'}
               </Button>
             </section>
           </FormProviderCS>

@@ -1,6 +1,7 @@
+import { useParams } from 'next/navigation'
+
 import { useTheme } from '@mui/material/styles'
 
-import horizontalMenuData from '@/data/navigation/horizontalMenuData'
 import { useSettings } from '@core/hooks/useSettings'
 
 // Style Imports
@@ -23,6 +24,8 @@ import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNav
 import VerticalNavContent from './VerticalNavContent'
 
 // Type Imports
+import useHorizontalMenuData from '@/data/navigation/horizontalMenuData'
+import type { getDictionary } from '@/utils/getDictionary'
 import type { VerticalMenuContextProps } from '@menu/components/vertical-menu/Menu'
 
 type RenderExpandIconProps = {
@@ -46,7 +49,7 @@ const RenderVerticalExpandIcon = ({ open, transitionDuration }: RenderVerticalEx
   </StyledVerticalNavExpandIcon>
 )
 
-const HorizontalMenu = () => {
+const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof getDictionary>> }) => {
   // Hooks
   const verticalNavOptions = useVerticalNav()
   const theme = useTheme()
@@ -55,6 +58,11 @@ const HorizontalMenu = () => {
   // Vars
   const { skin } = settings
   const { transitionDuration } = verticalNavOptions
+
+  const params = useParams()
+  const { lang: locale } = params
+
+  const horizontallMenu = useHorizontalMenuData({ dictionary, locale })
 
   return (
     <HorizontalNav
@@ -83,7 +91,7 @@ const HorizontalMenu = () => {
           renderExpandedMenuItemIcon: { icon: <i className='ri-circle-fill' /> }
         }}
       >
-        {horizontalMenuData().map((menu, idx) => (
+        {horizontallMenu.map((menu, idx) => (
           <MenuItem key={idx} href={menu.href} icon={<i className={menu.icon} />}>
             {menu.label}
           </MenuItem>

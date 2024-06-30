@@ -5,10 +5,11 @@ import NotFound from '@views/NotFound'
 
 // Util Imports
 import { getServerMode, getSystemMode } from '@core/utils/serverHelpers'
+import { i18n, type Locale } from '@/configs/i18n'
 
-const NotFoundPage = () => {
+const NotFoundPage = ({ params }: { params: { lang: Locale } }) => {
   // Vars
-  const direction = 'ltr'
+  const direction = i18n.langDirection[params.lang]
   const mode = getServerMode()
   const systemMode = getSystemMode()
 

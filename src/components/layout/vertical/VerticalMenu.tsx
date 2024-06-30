@@ -1,11 +1,10 @@
-import { useMemo } from 'react'
-
 // Third-party Imports
+import { useParams } from 'next/navigation'
+
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 import { useTheme } from '@mui/material/styles'
 
-import verticalMenuData from '@/data/navigation/verticalMenuData'
 import { useSettings } from '@core/hooks/useSettings'
 // Style Imports
 import menuItemStyles from '@core/styles/vertical/menuItemStyles'
@@ -22,6 +21,8 @@ import { Menu, MenuItem, MenuSection, SubMenu } from '@menu/vertical-menu'
 
 // Type Imports
 import type { VerticalMenuContextProps } from '@menu/components/vertical-menu/Menu'
+import type { getDictionary } from '@/utils/getDictionary'
+import useVerticalMenuData from '@/data/navigation/verticalMenuData'
 
 type RenderExpandIconProps = {
   open?: boolean
@@ -30,6 +31,7 @@ type RenderExpandIconProps = {
 
 type Props = {
   scrollMenu: (container: any, isPerfectScrollbar: boolean) => void
+  dictionary: Awaited<ReturnType<typeof getDictionary>>
 }
 
 const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) => (
@@ -38,7 +40,7 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
   </StyledVerticalNavExpandIcon>
 )
 
-const VerticalMenu = ({ scrollMenu }: Props) => {
+const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
@@ -50,8 +52,11 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
 
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
+  const params = useParams()
+  const { lang: locale } = params
+
   // Menus
-  const verticalMenu = useMemo(() => verticalMenuData(), [])
+  const verticalMenu = useVerticalMenuData({ dictionary, locale })
 
   return (
     // eslint-disable-next-line lines-around-comment
