@@ -8,6 +8,7 @@ import { styled, useColorScheme, useTheme } from '@mui/material/styles'
 
 // Type Imports
 import type { Mode, SystemMode } from '@core/types'
+import type { getDictionary } from '@/utils/getDictionary'
 
 // Component Imports
 import VerticalNav, { NavHeader, NavCollapseIcons } from '@menu/vertical-menu'
@@ -24,6 +25,7 @@ import navigationCustomStyles from '@core/styles/vertical/navigationCustomStyles
 type Props = {
   mode: Mode
   systemMode: SystemMode
+  dictionary: Awaited<ReturnType<typeof getDictionary>>
 }
 
 const StyledBoxForShadow = styled('div')(({ theme }) => ({
@@ -63,7 +65,7 @@ const MenuToggleSvg = (
 
 const Navigation = (props: Props) => {
   // Props
-  const { mode, systemMode } = props
+  const { mode, systemMode, dictionary } = props
 
   // Hooks
   const verticalNavOptions = useVerticalNav()
@@ -139,7 +141,7 @@ const Navigation = (props: Props) => {
         )}
       </NavHeader>
       <StyledBoxForShadow ref={shadowRef} />
-      <VerticalMenu scrollMenu={scrollMenu} />
+      <VerticalMenu scrollMenu={scrollMenu} dictionary={dictionary} />
     </VerticalNav>
   )
 }

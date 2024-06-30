@@ -6,21 +6,24 @@ import { useForm } from 'react-hook-form'
 
 import Grid from '@mui/material/Grid'
 
-import TableCore from '@/components/table/core'
 import DrawerCore from '@/components/drawer/core'
+import { FormEach } from '@/components/form/function-form'
 import type { IFieldType } from '@/components/form/render-input'
 import renderFields from '@/components/form/render-input'
-import { FormEach } from '@/components/form/function-form'
-import type { IUnit } from '@/types/category/unit'
+import TableCore from '@/components/table/core'
+import { useDictionary } from '@/hooks/DictionaryContext'
 import {
   useCreateUnitMutation,
-  useUpdateUnitMutation,
   useListUnitQuery,
-  useRemoveUnitMutation
+  useRemoveUnitMutation,
+  useUpdateUnitMutation
 } from '@/redux-store/slices/cate-unit'
+import type { IUnit } from '@/types/category/unit'
 import { useTableUnit } from './component/useTable'
 
-export default function Page() {
+// export default function PageUnit({ dictionary }: { dictionary: Awaited<ReturnType<typeof getDictionary>> }) {
+export default function PageUnit() {
+  const dictionary = useDictionary()
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
 
@@ -86,7 +89,7 @@ export default function Page() {
       name: 'code',
       colProps: { xs: 6 },
       inputProps: {
-        label: 'Mã đơn vị',
+        label: dictionary['unit'].name,
         autoFocus: true
       },
       controlProps: { rules: { required: true } }
@@ -95,7 +98,7 @@ export default function Page() {
       type: 'input',
       name: 'name',
       colProps: { xs: 6 },
-      inputProps: { label: 'Tên đơn vị' },
+      inputProps: { label: dictionary['unit'].code },
       controlProps: { rules: { required: true } }
     }
   ]
@@ -114,8 +117,9 @@ export default function Page() {
         onValid={handleOnFinish}
         setDrawerOpen={setDrawerOpen}
         size={{ base: '100%', md: 700 }}
-        title={isEdit ? 'Cập nhật đơn vị' : 'Thêm mới đơn vị'}
+        title={isEdit ? dictionary['unit'].updateUnit : dictionary['unit'].createUnit}
         loading={createLoading || updateLoading}
+        // dictionary={dictionary}
       >
         <Grid container spacing={4}>
           {inputs.map(input => renderFields({ ...input, errors: methods.formState.errors }))}

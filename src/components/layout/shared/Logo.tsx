@@ -6,7 +6,12 @@ import { useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 
 // Third-party Imports
+import { useParams } from 'next/navigation'
+
 import styled from '@emotion/styled'
+
+import type { Locale } from '@configs/i18n'
+import { getLocalizedUrl } from '@/utils/i18n'
 
 // Type Imports
 import type { VerticalNavContextProps } from '@menu/contexts/verticalNavContext'
@@ -42,6 +47,8 @@ const LogoText = styled.span<LogoTextProps>`
 `
 
 const Logo = ({ component = false }: { component?: boolean }) => {
+  const params = useParams()
+  const { lang: locale } = params
   // Refs
   const logoTextRef = useRef<HTMLSpanElement>(null)
 
@@ -74,7 +81,10 @@ const Logo = ({ component = false }: { component?: boolean }) => {
   return (
     // eslint-disable-next-line lines-around-comment
     /* @ts-ignore */
-    <LogoWrapper className='flex items-center min-bs-[24px]' {...(!component && { href: '/' })}>
+    <LogoWrapper
+      className='flex items-center min-bs-[24px]'
+      {...(!component && { href: getLocalizedUrl('/', locale as Locale) })}
+    >
       <MaterializeLogo />
       <LogoText
         ref={logoTextRef}

@@ -1,0 +1,33 @@
+{
+  "common": {
+    "manipulation": "Thao tác",
+    "save": "Lưu",
+    "cancel": "Huỷ"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "manage": {
+      "manage": "Quản lý",
+      "manageGoods": "QL. hàng",
+      "manageUid": "QL. UID",
+      "manageImp": "QL. Nhập",
+      "manageExp": "QL. Xuất",
+      "manageMate": "QL. Vật Tư"
+    },
+    "category": {
+      "category": "Danh mục",
+      "inventoryShort": "DM. Kho",
+      "shipmentShort": "DM. Chủ hàng",
+      "productShort": "DM. Sản phẩm",
+      "unitsShort": "DM. Đơn vị",
+      "materialsShort": "DM. Vật tư",
+      "materialTypeList": "DM. Loại vật tư"
+    }
+  },
+  "unit": {
+    "name": "Tên đơn vị",
+    "code": "Mã đơn vị",
+    "updateUnit": "Cập nhật đơn vị",
+    "createUnit": "Thêm mới đơn vị"
+  }
+}

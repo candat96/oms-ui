@@ -5,29 +5,32 @@ import { createColumnHelper } from '@tanstack/react-table'
 import { toast } from 'react-toastify'
 
 import ColumnActions from '@/components/table/column-actions'
-import type { IColumns } from '@/types/table'
-import type { IUnit } from '@/types/category/unit'
 import { MESSAGE } from '@/constants/message-response'
+import { useDictionary } from '@/hooks/DictionaryContext'
+import type { IUnit } from '@/types/category/unit'
+import type { IColumns } from '@/types/table'
 
 const columnHelper = createColumnHelper<IUnit>()
 
 type IProps = {
   handleEdit: (row: IUnit) => void
   handleDelete: (row: IUnit) => void
+  // dictionary: Awaited<ReturnType<typeof getDictionary>>
 }
 
 export const useTableUnit = (props: IProps) => {
   const { handleEdit, handleDelete } = props
+  const dictionary = useDictionary()
 
   const columns = useMemo<IColumns<IUnit>>(
     () => [
       columnHelper.accessor('code', {
         cell: info => info.getValue(),
-        header: 'MÃ ĐƠN VỊ'
+        header: dictionary['unit'].code
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: 'TÊN ĐƠN VỊ'
+        header: dictionary['unit'].name
       }),
       {
         id: 'actions',
@@ -43,7 +46,7 @@ export const useTableUnit = (props: IProps) => {
             />
           )
         },
-        header: 'thao tác',
+        header: dictionary['common'].manipulation,
         meta: { align: 'center' }
       }
     ],

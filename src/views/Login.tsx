@@ -4,7 +4,7 @@
 import { useState } from 'react'
 
 // Next Imports
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
 // MUI Imports
 import Typography from '@mui/material/Typography'
@@ -44,6 +44,8 @@ import { useSettings } from '@core/hooks/useSettings'
 import { useAppDispatch } from '@/hooks/useToolkit'
 import { setCredentials } from '@/redux-store/slices/auth'
 import { MESSAGE } from '@/constants/message-response'
+import { getLocalizedUrl } from '@/utils/i18n'
+import type { Locale } from '@/configs/i18n'
 
 type ErrorType = {
   message: string[]
@@ -81,6 +83,7 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
   const { settings } = useSettings()
   const authBackground = useImageVariant(mode, lightImg, darkImg)
   const [loading, setLoading] = useState<boolean>(false)
+  const { lang: locale } = useParams()
 
   const {
     control,
@@ -133,9 +136,10 @@ const LoginV2 = ({ mode }: { mode: Mode }) => {
       })
 
     if (response && response.ok && response.error === null) {
+      // Vars
       const redirectURL = searchParams.get('redirectTo') ?? '/home'
 
-      router.replace(redirectURL)
+      router.replace(getLocalizedUrl(redirectURL, locale as Locale))
       toast.success(MESSAGE['login-success'])
     } else {
       if (response?.error) {
