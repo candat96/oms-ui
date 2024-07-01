@@ -8,9 +8,17 @@ import type { IMapping } from '@/utils/mappingData'
 
 const { API_UNIT } = API_CONSTANT
 
+interface TypeUnitResponse {
+  meta?: {
+    total: number
+    [key: string]: any
+  }
+  docs: Partial<unknown> | Partial<unknown>[]
+}
+
 const cateUnit = api.injectEndpoints({
   endpoints: build => ({
-    listUnit: build.query({
+    listUnit: build.query<TypeUnitResponse, any>({
       query: params => ({ ...params, url: API_UNIT }),
       providesTags: [{ type: API_UNIT, id: 'LIST' }],
       transformResponse: (response: { [s: string]: unknown }) => {
@@ -66,8 +74,68 @@ const cateUnit = api.injectEndpoints({
           toast.success(MESSAGE['remove-failed'])
         }
       }
+    }),
+    lockUnit: build.mutation({
+      query: ({ ...patch }) => ({ url: `${API_UNIT}/lock`, method: 'POST', body: patch }),
+      invalidatesTags: [{ type: API_UNIT, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+          .then(() => {
+            toast.success(MESSAGE['update-success'], {
+              autoClose: 3000
+            })
+          })
+          .catch(() => {
+            toast.error(MESSAGE['update-failed'], {
+              autoClose: 3000
+            })
+          })
+      }
+    }),
+    deletesUnit: build.mutation({
+      query: ({ ...patch }) => ({ url: `${API_UNIT}/delete/bulk`, method: 'POST', body: patch }),
+      invalidatesTags: [{ type: API_UNIT, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+          .then(() => {
+            toast.success(MESSAGE['remove-success'], {
+              autoClose: 3000
+            })
+          })
+          .catch(() => {
+            toast.error(MESSAGE['remove-failed'], {
+              autoClose: 3000
+            })
+          })
+      }
+    }),
+    createBulkUnit: build.mutation({
+      query: data => ({ url: `${API_UNIT}/bulk`, method: 'POST', body: data }),
+      invalidatesTags: [{ type: API_UNIT, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+          .then(() => {
+            toast.success(MESSAGE['create-success'], {
+              autoClose: 3000
+            })
+          })
+          .catch(() => {
+            toast.error(MESSAGE['create-failed'], {
+              autoClose: 3000
+            })
+          })
+      }
     })
   })
 })
 
-export const { useListUnitQuery, useCreateUnitMutation, useUpdateUnitMutation, useRemoveUnitMutation } = cateUnit
+export const {
+  useListUnitQuery,
+  useCreateUnitMutation,
+  useUpdateUnitMutation,
+  useRemoveUnitMutation,
+
+  useLockUnitMutation,
+  useDeletesUnitMutation,
+  useCreateBulkUnitMutation
+} = cateUnit

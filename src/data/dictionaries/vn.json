@@ -21,7 +21,8 @@
       "productShort": "DM. Sản phẩm",
       "unitsShort": "DM. Đơn vị",
       "materialsShort": "DM. Vật tư",
-      "materialTypeList": "DM. Loại vật tư"
+      "materialTypeList": "DM. Loại vật tư",
+      "supplierDirectoryShort": "DM. Nhà cung cấp"
     }
   },
   "unit": {

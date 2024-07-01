@@ -2,10 +2,12 @@ export type ISupply = {
   id: string
   code: string
   name: string
-  type: string
   description: string
   unit: string
   staff: string | null
-  size: { height: number | null; width: number | null; length: number | null }
-  mass: number | null
+  size: { height: number | string | null; width: number | string | null; length: number | string | null }
+  mass: number | string | null
+  type?: number | null | string
+  typeId?: string
+  unitId?: string
 }

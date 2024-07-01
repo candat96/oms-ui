@@ -11,7 +11,7 @@ const { API_TYPE_SUPPLY } = API_CONSTANT
 interface TypeSupplyResponse {
   meta?: {
     total: number
-    [key: string]: any // Bao gồm các thuộc tính meta khác nếu có
+    [key: string]: any
   }
   docs: Partial<unknown> | Partial<unknown>[]
 }
@@ -24,7 +24,7 @@ const cateTypeSupply = api.injectEndpoints({
       transformResponse: (response: { [s: string]: unknown }) => {
         const mapper = {
           mapper: {},
-          keeps: ['id', 'code', 'name', 'lock', 'description']
+          keeps: ['id', 'code', 'name', 'lock', 'description', 'type', 'typeId', 'unitId']
         } as unknown as IMapping
 
         const result = mappingData({ from: response.docs, ...mapper })
@@ -83,7 +83,7 @@ const cateTypeSupply = api.injectEndpoints({
       }
     }),
     lockTypeSupply: build.mutation({
-      query: ({ ...patch }) => ({ url: `${API_TYPE_SUPPLY}/lock`, method: 'PATCH', body: patch }),
+      query: ({ ...patch }) => ({ url: `${API_TYPE_SUPPLY}/lock`, method: 'POST', body: patch }),
       invalidatesTags: [{ type: API_TYPE_SUPPLY, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled

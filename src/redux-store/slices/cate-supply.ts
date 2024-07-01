@@ -6,7 +6,7 @@ import { mappingData } from '@/utils/mappingData'
 import { MESSAGE } from '@/constants/message-response'
 import type { IMapping } from '@/utils/mappingData'
 
-const { API_PRODUCT } = API_CONSTANT
+const { API_SUPPLY } = API_CONSTANT
 
 interface SupplyResponse {
   meta?: {
@@ -16,15 +16,15 @@ interface SupplyResponse {
   docs: Partial<unknown> | Partial<unknown>[]
 }
 
-const cateProduct = api.injectEndpoints({
+const cateSupply = api.injectEndpoints({
   endpoints: build => ({
-    listProduct: build.query<SupplyResponse, any>({
-      query: params => ({ ...params, url: API_PRODUCT }),
-      providesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    listSupply: build.query<SupplyResponse, any>({
+      query: params => ({ ...params, url: API_SUPPLY }),
+      providesTags: [{ type: API_SUPPLY, id: 'LIST' }],
       transformResponse: (response: { [s: string]: unknown }) => {
         const mapper = {
           mapper: {},
-          keeps: ['id', 'code', 'name', 'mass', 'image', 'size', 'description'],
+          keeps: ['id', 'code', 'name', 'lock', 'description', 'mass', 'type', 'unit', 'typeId', 'unitId'],
           handle: (from: { [s: string]: unknown }) => {
             return {
               size: { height: from.height, width: from.width, length: from.length }
@@ -37,47 +37,26 @@ const cateProduct = api.injectEndpoints({
         return { ...response, docs: result }
       }
     }),
-    createProduct: build.mutation({
-      query: data => ({ url: API_PRODUCT, method: 'POST', body: data }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    createSupply: build.mutation({
+      query: data => ({ url: API_SUPPLY, method: 'POST', body: data }),
+      invalidatesTags: [{ type: API_SUPPLY, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
-            toast.success(MESSAGE['create-success'])
+            toast.success(MESSAGE['create-success'], {
+              autoClose: 3000
+            })
           })
           .catch(() => {
-            toast.error(MESSAGE['create-failed'])
+            toast.error(MESSAGE['create-failed'], {
+              autoClose: 3000
+            })
           })
       }
     }),
-    updateProduct: build.mutation({
-      query: ({ id, ...patch }) => ({ url: `${API_PRODUCT}/${id}`, method: 'PATCH', body: patch }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
-      async onQueryStarted(_, { queryFulfilled }) {
-        await queryFulfilled
-          .then(() => {
-            toast.success(MESSAGE['update-success'])
-          })
-          .catch(() => {
-            toast.error(MESSAGE['update-failed'])
-          })
-      }
-    }),
-    removeProduct: build.mutation({
-      query: id => ({ url: `${API_PRODUCT}/${id}`, method: 'DELETE' }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
-      async onQueryStarted(_, { queryFulfilled }) {
-        try {
-          await queryFulfilled
-          toast.success(MESSAGE['remove-success'])
-        } catch (error) {
-          toast.success(MESSAGE['remove-failed'])
-        }
-      }
-    }),
-    lockProduct: build.mutation({
-      query: ({ ...patch }) => ({ url: `${API_PRODUCT}/lock`, method: 'PATCH', body: patch }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    updateSupply: build.mutation({
+      query: ({ id, ...patch }) => ({ url: `${API_SUPPLY}/${id}`, method: 'PATCH', body: patch }),
+      invalidatesTags: [{ type: API_SUPPLY, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
@@ -92,9 +71,42 @@ const cateProduct = api.injectEndpoints({
           })
       }
     }),
-    deletesProduct: build.mutation({
-      query: ({ ...patch }) => ({ url: `${API_PRODUCT}/delete/bulk`, method: 'POST', body: patch }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    removeSupply: build.mutation({
+      query: id => ({ url: `${API_SUPPLY}/${id}`, method: 'DELETE' }),
+      invalidatesTags: [{ type: API_SUPPLY, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled
+          toast.success(MESSAGE['remove-success'], {
+            autoClose: 3000
+          })
+        } catch (error) {
+          toast.success(MESSAGE['remove-failed'], {
+            autoClose: 3000
+          })
+        }
+      }
+    }),
+    lockSupply: build.mutation({
+      query: ({ ...patch }) => ({ url: `${API_SUPPLY}/lock`, method: 'POST', body: patch }),
+      invalidatesTags: [{ type: API_SUPPLY, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+          .then(() => {
+            toast.success(MESSAGE['update-success'], {
+              autoClose: 3000
+            })
+          })
+          .catch(() => {
+            toast.error(MESSAGE['update-failed'], {
+              autoClose: 3000
+            })
+          })
+      }
+    }),
+    deletesSupply: build.mutation({
+      query: ({ ...patch }) => ({ url: `${API_SUPPLY}/delete/bulk`, method: 'POST', body: patch }),
+      invalidatesTags: [{ type: API_SUPPLY, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
@@ -109,9 +121,9 @@ const cateProduct = api.injectEndpoints({
           })
       }
     }),
-    createBulkProduct: build.mutation({
-      query: data => ({ url: `${API_PRODUCT}/bulk`, method: 'POST', body: data }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    createBulkSupply: build.mutation({
+      query: data => ({ url: `${API_SUPPLY}/bulk`, method: 'POST', body: data }),
+      invalidatesTags: [{ type: API_SUPPLY, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
@@ -130,12 +142,11 @@ const cateProduct = api.injectEndpoints({
 })
 
 export const {
-  useListProductQuery,
-  useCreateProductMutation,
-  useUpdateProductMutation,
-  useRemoveProductMutation,
-
-  useLockProductMutation,
-  useDeletesProductMutation,
-  useCreateBulkProductMutation
-} = cateProduct
+  useListSupplyQuery,
+  useCreateSupplyMutation,
+  useUpdateSupplyMutation,
+  useRemoveSupplyMutation,
+  useLockSupplyMutation,
+  useDeletesSupplyMutation,
+  useCreateBulkSupplyMutation
+} = cateSupply

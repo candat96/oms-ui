@@ -21,7 +21,8 @@
       "productShort": "Product category",
       "unitsShort": "Category of units",
       "materialsShort": "Materials list",
-      "materialTypeList": "Material type list"
+      "materialTypeList": "Material type list",
+      "supplierDirectoryShort": "Supplier directory"
     }
   },
   "unit": {

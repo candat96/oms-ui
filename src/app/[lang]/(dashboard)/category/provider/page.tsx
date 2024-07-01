@@ -13,23 +13,23 @@ import { isArray } from 'lodash'
 import { useSearchQuery } from '@/@menu/hooks/useSearchQuery'
 import DialogGetDataExcel from '@/components/dialog/dialogGetDataExcel'
 import DrawerCore from '@/components/drawer/core'
-import exportExcelTypeSupply from '@/components/excel/export_exel_kq'
+import exportExcelProvider from '@/components/excel/export_exel_kq'
 import { FormEach } from '@/components/form/function-form'
 import type { IFieldType } from '@/components/form/render-input'
 import renderFields from '@/components/form/render-input'
 import TableCore from '@/components/table/core'
-import {
-  useCreateBulkTypeSupplyMutation,
-  useCreateTypeSupplyMutation,
-  useDeletesTypeSupplyMutation,
-  useListTypeSupplyQuery,
-  useLockTypeSupplyMutation,
-  useRemoveTypeSupplyMutation,
-  useUpdateTypeSupplyMutation
-} from '@/redux-store/slices/cate-type-supply'
-import type { ITypeSupply } from '@/types/category/typeSupply'
 import { IMenuFnKey } from '@/types/table'
-import { useTableTypeSupply } from './component/useTable'
+import { useTableProvider } from './component/useTable'
+import {
+  useCreateBulkProviderMutation,
+  useCreateProviderMutation,
+  useDeletesProviderMutation,
+  useListProviderQuery,
+  useLockProviderMutation,
+  useRemoveProviderMutation,
+  useUpdateProviderMutation
+} from '@/redux-store/slices/cate-provider'
+import type { IProvider } from '@/types/category/typeProvider'
 
 export default function Page() {
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -39,21 +39,21 @@ export default function Page() {
 
   const { params, handleOnPage, handleOnLimit } = useSearchQuery()
 
-  const TypeSupply = useListTypeSupplyQuery({ params })
-  const [createTypeSupply, { isLoading: createLoading }] = useCreateTypeSupplyMutation()
-  const [updateTypeSupply, { isLoading: updateLoading }] = useUpdateTypeSupplyMutation()
-  const [removeTypeSupply] = useRemoveTypeSupplyMutation()
+  const Provider = useListProviderQuery({ params })
+  const [createProvider, { isLoading: createLoading }] = useCreateProviderMutation()
+  const [updateProvider, { isLoading: updateLoading }] = useUpdateProviderMutation()
+  const [removeProvider] = useRemoveProviderMutation()
 
-  const [lockTypeSupply] = useLockTypeSupplyMutation()
-  const [deletesTypeSupply] = useDeletesTypeSupplyMutation()
-  const [createBulkTypeSupply] = useCreateBulkTypeSupplyMutation()
+  const [lockProvider] = useLockProviderMutation()
+  const [deletesProvider] = useDeletesProviderMutation()
+  const [createBulkProvider] = useCreateBulkProviderMutation()
 
-  const methods = useForm<ITypeSupply>({
+  const methods = useForm<IProvider>({
     defaultValues: {
       code: '',
       name: '',
       id: '',
-      description: ''
+      note: ''
     }
   })
 
@@ -65,47 +65,45 @@ export default function Page() {
   }
 
   const handleOnEdit = useCallback(
-    (data: ITypeSupply) => {
+    (data: IProvider) => {
       setIsEdit(true)
-      FormEach<ITypeSupply>({ ...data }, setValue)
+      FormEach<IProvider>({ ...data }, setValue)
       setDrawerOpen(true)
     },
     [setValue]
   )
 
   const handleOnRemove = useCallback(
-    (data: ITypeSupply) => {
-      removeTypeSupply(data.id)
+    (data: IProvider) => {
+      removeProvider(data.id)
     },
-    [removeTypeSupply]
+    [removeProvider]
   )
 
-  const handleLock = (row: ITypeSupply, lock: boolean) => {
-    lockTypeSupply({ id: [row.id], lock }).finally(() => {
-      console.log('row.id', row.id)
-    })
+  const handleLock = (row: IProvider, lock: boolean) => {
+    lockProvider({ id: [row.id], lock }).finally(() => {})
   }
 
-  const { columns } = useTableTypeSupply({
+  const { columns } = useTableProvider({
     handleEdit: handleOnEdit,
     handleDelete: handleOnRemove,
     handleLock: handleLock
   })
 
-  const handleOnFinish = (value: { [s: string]: unknown } & ITypeSupply) => {
+  const handleOnFinish = (value: { [s: string]: unknown } & IProvider) => {
     const result = {
       code: value.code,
       name: value.name,
-      description: value.description
+      note: value.note
     }
 
     if (isEdit) {
-      updateTypeSupply({ ...result, id: value.id }).finally(() => {
+      updateProvider({ ...result, id: value.id }).finally(() => {
         setDrawerOpen(false)
         setIsEdit(false)
       })
     } else {
-      createTypeSupply(result).finally(() => {
+      createProvider(result).finally(() => {
         setDrawerOpen(false)
       })
     }
@@ -117,7 +115,7 @@ export default function Page() {
       name: 'code',
       colProps: { xs: 6 },
       inputProps: {
-        label: 'Mã loại vật tư',
+        label: 'Mã nhà cung cấp',
         autoFocus: true
       },
       controlProps: { rules: { required: true } }
@@ -131,7 +129,7 @@ export default function Page() {
     },
     {
       type: 'input',
-      name: 'description',
+      name: 'note',
       colProps: { xs: 12 },
       inputProps: { label: 'Mô tả' }
     }
@@ -151,7 +149,7 @@ export default function Page() {
           item['__EMPTY_3'].includes('Khoá') || item['__EMPTY_3'].includes('khoá') || item['__EMPTY_3'].includes('khoa')
       }))
 
-      createBulkTypeSupply({ data: transformedData })
+      createBulkProvider({ data: transformedData })
         .then(() => {
           dialogExcel.current.handleClose(true)
         })
@@ -171,9 +169,9 @@ export default function Page() {
     if (type == IMenuFnKey.EXPORT) {
       const filtered = []
 
-      if (idsArray && TypeSupply?.data?.docs && isArray(TypeSupply?.data?.docs)) {
+      if (idsArray && Provider?.data?.docs && isArray(Provider?.data?.docs)) {
         const idSection = new Set(idsArray)
-        const data = [...TypeSupply?.data?.docs]
+        const data = [...Provider?.data?.docs]
 
         for (const item of data) {
           if (idSection.has(item.id)) {
@@ -185,7 +183,7 @@ export default function Page() {
         }
       }
 
-      exportExcelTypeSupply({ data: filtered }).finally(() => {})
+      exportExcelProvider({ data: filtered }).finally(() => {})
     }
 
     if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -198,11 +196,11 @@ export default function Page() {
       }
 
       if (type == IMenuFnKey.HIDDEN || type == IMenuFnKey.DISPLAY) {
-        lockTypeSupply({ id: idsArray, lock: type == IMenuFnKey.DISPLAY }).finally(() => {})
+        lockProvider({ id: idsArray, lock: type == IMenuFnKey.DISPLAY }).finally(() => {})
       }
 
       if (type == IMenuFnKey.DELETE) {
-        deletesTypeSupply({ id: idsArray }).finally(() => {})
+        deletesProvider({ id: idsArray }).finally(() => {})
       }
     }
   }
@@ -211,7 +209,7 @@ export default function Page() {
     <section>
       <DialogGetDataExcel handleUploadProp={handleUpload} ref={dialogExcel} />
 
-      <TableCore<ITypeSupply>
+      <TableCore<IProvider>
         header={{
           filter: false,
           select: true,
@@ -225,12 +223,12 @@ export default function Page() {
           }
         }}
         columns={columns}
-        data={(TypeSupply.data?.docs || []) as ITypeSupply[]}
+        data={(Provider.data?.docs || []) as IProvider[]}
         footer={{
           paginate: {
             page: params.page,
             limit: params.limit,
-            total: TypeSupply.data?.meta?.total || 0,
+            total: Provider.data?.meta?.total || 0,
             onPage: handleOnPage,
             onRow: handleOnLimit
           }
@@ -243,7 +241,7 @@ export default function Page() {
         onValid={handleOnFinish}
         setDrawerOpen={setDrawerOpen}
         size={{ base: '100%', md: 700 }}
-        title={isEdit ? 'Cập nhật loại vật tư' : 'Thêm mới loại vật tư'}
+        title={isEdit ? 'Cập nhật nhà cung cấp' : 'Thêm mới nhà cung cấp'}
         loading={createLoading || updateLoading}
       >
         <Grid container spacing={4}>
