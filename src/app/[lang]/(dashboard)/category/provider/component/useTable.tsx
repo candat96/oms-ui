@@ -3,37 +3,39 @@ import { useMemo } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import ColumnActions from '@/components/table/column-actions'
-import { useDictionary } from '@/hooks/DictionaryContext'
-import type { IUnit } from '@/types/category/unit'
 import type { IColumns } from '@/types/table'
+import type { IProvider } from '@/types/category/typeProvider'
 
-const columnHelper = createColumnHelper<IUnit>()
+const columnHelper = createColumnHelper<IProvider>()
 
 type IProps = {
-  handleEdit: (row: IUnit) => void
-  handleDelete: (row: IUnit) => void
-  handleLock: (row: IUnit, lock: boolean) => void
+  handleEdit: (row: IProvider) => void
+  handleDelete: (row: IProvider) => void
+  handleLock: (row: IProvider, lock: boolean) => void
 }
 
-export const useTableUnit = (props: IProps) => {
+export const useTableProvider = (props: IProps) => {
   const { handleEdit, handleDelete, handleLock } = props
-  const dictionary = useDictionary()
 
-  const columns = useMemo<IColumns<IUnit>>(
+  const columns = useMemo<IColumns<IProvider>>(
     () => [
       columnHelper.accessor('code', {
         cell: info => info.getValue(),
-        header: dictionary['unit'].code
+        header: 'MÃ Nhà cung cấp'
       }),
       columnHelper.accessor('name', {
         cell: info => info.getValue(),
-        header: dictionary['unit'].name
+        header: 'TÊN Nhà cung cấp'
+      }),
+      columnHelper.accessor('note', {
+        cell: info => info.getValue(),
+        header: 'Ghi chú'
       }),
       {
         id: 'actions',
         cell: info => {
           return (
-            <ColumnActions<IUnit>
+            <ColumnActions<IProvider>
               onDelete={handleDelete}
               onEdit={handleEdit}
               onSwitch={(row, lock) => {
@@ -43,7 +45,7 @@ export const useTableUnit = (props: IProps) => {
             />
           )
         },
-        header: dictionary['common'].manipulation,
+        header: 'thao tác',
         meta: { align: 'center' }
       }
     ],

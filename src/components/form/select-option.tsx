@@ -14,7 +14,7 @@ import type { TextFieldPropsSizeOverrides } from '@mui/material'
 
 type IProps = Omit<Omit<ControllerProps, 'render'>, 'name'> & {
   name: string
-  selectProps?: SelectProps & { options?: Array<{ value: string; label: string }> }
+  selectProps?: SelectProps & { options?: Array<{ value: string; label: string; disabled?: boolean }> }
   errors?: FieldErrors
   colProps?: GridProps
   size?: OverridableStringUnion<'small' | 'medium', TextFieldPropsSizeOverrides>
@@ -42,7 +42,7 @@ const FormSelectOption = (props: IProps) => {
               {...(errors && errors[name] && { error: true, helperText: errors[name]?.message?.toString() })}
             >
               {(selectProps?.options ? selectProps.options : []).map((option, idx) => (
-                <MenuItem value={option.value} key={idx}>
+                <MenuItem value={option.value} key={idx} disabled={option.disabled || false}>
                   {option.label}
                 </MenuItem>
               ))}

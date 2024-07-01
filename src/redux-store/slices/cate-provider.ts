@@ -6,30 +6,25 @@ import { mappingData } from '@/utils/mappingData'
 import { MESSAGE } from '@/constants/message-response'
 import type { IMapping } from '@/utils/mappingData'
 
-const { API_PRODUCT } = API_CONSTANT
+const { API_PROVIDER } = API_CONSTANT
 
-interface SupplyResponse {
+interface ProviderResponse {
   meta?: {
     total: number
-    [key: string]: any // Bao gồm các thuộc tính meta khác nếu có
+    [key: string]: any
   }
   docs: Partial<unknown> | Partial<unknown>[]
 }
 
-const cateProduct = api.injectEndpoints({
+const cateProvider = api.injectEndpoints({
   endpoints: build => ({
-    listProduct: build.query<SupplyResponse, any>({
-      query: params => ({ ...params, url: API_PRODUCT }),
-      providesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    listProvider: build.query<ProviderResponse, any>({
+      query: params => ({ ...params, url: API_PROVIDER }),
+      providesTags: [{ type: API_PROVIDER, id: 'LIST' }],
       transformResponse: (response: { [s: string]: unknown }) => {
         const mapper = {
           mapper: {},
-          keeps: ['id', 'code', 'name', 'mass', 'image', 'size', 'description'],
-          handle: (from: { [s: string]: unknown }) => {
-            return {
-              size: { height: from.height, width: from.width, length: from.length }
-            }
-          }
+          keeps: ['id', 'code', 'name', 'note', 'lock']
         } as unknown as IMapping
 
         const result = mappingData({ from: response.docs, ...mapper })
@@ -37,47 +32,26 @@ const cateProduct = api.injectEndpoints({
         return { ...response, docs: result }
       }
     }),
-    createProduct: build.mutation({
-      query: data => ({ url: API_PRODUCT, method: 'POST', body: data }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    createProvider: build.mutation({
+      query: data => ({ url: API_PROVIDER, method: 'POST', body: data }),
+      invalidatesTags: [{ type: API_PROVIDER, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
-            toast.success(MESSAGE['create-success'])
+            toast.success(MESSAGE['create-success'], {
+              autoClose: 3000
+            })
           })
           .catch(() => {
-            toast.error(MESSAGE['create-failed'])
+            toast.error(MESSAGE['create-failed'], {
+              autoClose: 3000
+            })
           })
       }
     }),
-    updateProduct: build.mutation({
-      query: ({ id, ...patch }) => ({ url: `${API_PRODUCT}/${id}`, method: 'PATCH', body: patch }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
-      async onQueryStarted(_, { queryFulfilled }) {
-        await queryFulfilled
-          .then(() => {
-            toast.success(MESSAGE['update-success'])
-          })
-          .catch(() => {
-            toast.error(MESSAGE['update-failed'])
-          })
-      }
-    }),
-    removeProduct: build.mutation({
-      query: id => ({ url: `${API_PRODUCT}/${id}`, method: 'DELETE' }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
-      async onQueryStarted(_, { queryFulfilled }) {
-        try {
-          await queryFulfilled
-          toast.success(MESSAGE['remove-success'])
-        } catch (error) {
-          toast.success(MESSAGE['remove-failed'])
-        }
-      }
-    }),
-    lockProduct: build.mutation({
-      query: ({ ...patch }) => ({ url: `${API_PRODUCT}/lock`, method: 'PATCH', body: patch }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    updateProvider: build.mutation({
+      query: ({ id, ...patch }) => ({ url: `${API_PROVIDER}/${id}`, method: 'PATCH', body: patch }),
+      invalidatesTags: [{ type: API_PROVIDER, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
@@ -92,9 +66,42 @@ const cateProduct = api.injectEndpoints({
           })
       }
     }),
-    deletesProduct: build.mutation({
-      query: ({ ...patch }) => ({ url: `${API_PRODUCT}/delete/bulk`, method: 'POST', body: patch }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    removeProvider: build.mutation({
+      query: id => ({ url: `${API_PROVIDER}/${id}`, method: 'DELETE' }),
+      invalidatesTags: [{ type: API_PROVIDER, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled
+          toast.success(MESSAGE['remove-success'], {
+            autoClose: 3000
+          })
+        } catch (error) {
+          toast.success(MESSAGE['remove-failed'], {
+            autoClose: 3000
+          })
+        }
+      }
+    }),
+    lockProvider: build.mutation({
+      query: ({ ...patch }) => ({ url: `${API_PROVIDER}/lock`, method: 'POST', body: patch }),
+      invalidatesTags: [{ type: API_PROVIDER, id: 'LIST' }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+          .then(() => {
+            toast.success(MESSAGE['update-success'], {
+              autoClose: 3000
+            })
+          })
+          .catch(() => {
+            toast.error(MESSAGE['update-failed'], {
+              autoClose: 3000
+            })
+          })
+      }
+    }),
+    deletesProvider: build.mutation({
+      query: ({ ...patch }) => ({ url: `${API_PROVIDER}/delete/bulk`, method: 'POST', body: patch }),
+      invalidatesTags: [{ type: API_PROVIDER, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
@@ -109,9 +116,9 @@ const cateProduct = api.injectEndpoints({
           })
       }
     }),
-    createBulkProduct: build.mutation({
-      query: data => ({ url: `${API_PRODUCT}/bulk`, method: 'POST', body: data }),
-      invalidatesTags: [{ type: API_PRODUCT, id: 'LIST' }],
+    createBulkProvider: build.mutation({
+      query: data => ({ url: `${API_PROVIDER}/bulk`, method: 'POST', body: data }),
+      invalidatesTags: [{ type: API_PROVIDER, id: 'LIST' }],
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled
           .then(() => {
@@ -130,12 +137,11 @@ const cateProduct = api.injectEndpoints({
 })
 
 export const {
-  useListProductQuery,
-  useCreateProductMutation,
-  useUpdateProductMutation,
-  useRemoveProductMutation,
-
-  useLockProductMutation,
-  useDeletesProductMutation,
-  useCreateBulkProductMutation
-} = cateProduct
+  useListProviderQuery,
+  useCreateProviderMutation,
+  useUpdateProviderMutation,
+  useRemoveProviderMutation,
+  useLockProviderMutation,
+  useDeletesProviderMutation,
+  useCreateBulkProviderMutation
+} = cateProvider

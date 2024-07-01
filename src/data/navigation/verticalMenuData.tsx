@@ -143,21 +143,21 @@ const useVerticalMenuData = (props: IProps): VerticalMenuDataType[] => {
       label: dictionary['navigation'].category.category,
       isSection: true,
       children: [
-        {
-          label: dictionary['navigation'].category.inventoryShort,
-          href: `${locale}/category/warehouse`,
-          icon: 'ri-archive-stack-line'
-        },
+        // {
+        //   label: dictionary['navigation'].category.inventoryShort,
+        //   href: `${locale}/category/warehouse`,
+        //   icon: 'ri-archive-stack-line'
+        // },
         // {
         //   label: 'DM. Layout',
         //   href: 'category/layout',
         //   icon: 'ri-layout-grid-line'
         // },
-        {
-          label: dictionary['navigation'].category.shipmentShort,
-          href: `${locale}/category/boss`,
-          icon: 'ri-account-box-line'
-        },
+        // {
+        //   label: dictionary['navigation'].category.shipmentShort,
+        //   href: `${locale}/category/boss`,
+        //   icon: 'ri-account-box-line'
+        // },
         {
           label: dictionary['navigation'].category.productShort,
           href: `${locale}/category/product`,
@@ -177,6 +177,12 @@ const useVerticalMenuData = (props: IProps): VerticalMenuDataType[] => {
           label: dictionary['navigation'].category.materialTypeList,
           href: `${locale}/category/type-supply`,
           icon: 'ri-suitcase-line'
+        },
+
+        {
+          label: dictionary['navigation'].category.supplierDirectoryShort,
+          href: `${locale}/category/provider`,
+          icon: 'ri-community-line'
         }
         // {
         //   label: 'DM. Sọt',

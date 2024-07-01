@@ -8,29 +8,43 @@ import InputAdornment from '@mui/material/InputAdornment'
 
 import Grid from '@mui/material/Grid'
 
+import { toast } from 'react-toastify'
+
+import { isArray } from 'lodash'
+
 import DrawerCore from '@/components/drawer/core'
 import { FormEach } from '@/components/form/function-form'
 import type { IFieldType } from '@/components/form/render-input'
 import renderFields from '@/components/form/render-input'
 import TableCore from '@/components/table/core'
 import {
+  // useCreateBulkProductMutation,
   useCreateProductMutation,
+  useDeletesProductMutation,
   useListProductQuery,
+  useLockProductMutation,
   useRemoveProductMutation,
   useUpdateProductMutation
 } from '@/redux-store/slices/cate-product'
 import type { IProduct } from '@/types'
 import { useTableProduct } from './component/useTable'
+import { IMenuFnKey } from '@/types/table'
+import { useSearchQuery } from '@/@menu/hooks/useSearchQuery'
 
 export default function Page() {
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
+  const { params, handleOnPage, handleOnLimit } = useSearchQuery()
 
   const product = useListProductQuery({})
 
   const [createProduct, { isLoading: createLoading }] = useCreateProductMutation()
   const [updateProduct, { isLoading: updateLoading }] = useUpdateProductMutation()
   const [removeProduct] = useRemoveProductMutation()
+
+  const [lockProduct] = useLockProductMutation()
+  const [deletesProduct] = useDeletesProductMutation()
+  // const [createBulkProduct] = useCreateBulkProductMutation()
 
   const methods = useForm<IProduct>({
     defaultValues: {
@@ -44,6 +58,54 @@ export default function Page() {
   })
 
   const { setValue } = methods
+
+  const handleAction = (type: any, value?: unknown) => {
+    if (type == IMenuFnKey.IMPORT) {
+      // handleClickOpen()
+
+      return
+    }
+
+    const idsArray = Object.keys(value as object)
+
+    if (type == IMenuFnKey.EXPORT) {
+      const filtered = []
+
+      if (idsArray && product?.data?.docs && isArray(product?.data?.docs)) {
+        const idSection = new Set(idsArray)
+        const data = [...product?.data?.docs]
+
+        for (const item of data) {
+          if (idSection.has(item.id)) {
+            filtered.push(item)
+            idSection.delete(item.id)
+          }
+
+          if (idSection.size === 0) break
+        }
+      }
+
+      // exportExcelProduct({ data: filtered }).finally(() => {})
+    }
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      console.log('value', value)
+
+      if (Object.keys(value).length === 0) {
+        toast.error('Vui lòng chọn ít nhất 1 đối tượng !')
+
+        return
+      }
+
+      if (type == IMenuFnKey.HIDDEN || type == IMenuFnKey.DISPLAY) {
+        lockProduct({ id: idsArray, lock: type == IMenuFnKey.DISPLAY }).finally(() => {})
+      }
+
+      if (type == IMenuFnKey.DELETE) {
+        deletesProduct({ id: idsArray }).finally(() => {})
+      }
+    }
+  }
 
   const handleCreate = () => {
     setIsEdit(false)
@@ -180,9 +242,29 @@ export default function Page() {
   return (
     <section>
       <TableCore<IProduct>
-        header={{ filter: false, create: { fn: handleCreate } }}
+        header={{
+          filter: false,
+          select: true,
+          create: { fn: handleCreate },
+          menus: {
+            [IMenuFnKey.EXPORT]: { fn: handleAction },
+            [IMenuFnKey.IMPORT]: { fn: handleAction },
+            [IMenuFnKey.HIDDEN]: { fn: handleAction },
+            [IMenuFnKey.DISPLAY]: { fn: handleAction },
+            [IMenuFnKey.DELETE]: { fn: handleAction }
+          }
+        }}
         columns={columns}
         data={(product.data?.docs || []) as IProduct[]}
+        footer={{
+          paginate: {
+            page: params.page,
+            limit: params.limit,
+            total: product.data?.meta?.total || 0,
+            onPage: handleOnPage,
+            onRow: handleOnLimit
+          }
+        }}
       />
 
       <DrawerCore
